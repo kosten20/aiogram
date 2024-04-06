@@ -1,11 +1,9 @@
 from dotenv import dotenv_values
 import asyncio
 from aiogram import Bot, Dispatcher, F
-from aiogram.filters import Command, CommandStart
+from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 import keyboards
-
-dp = Dispatcher()
 
 config = dotenv_values(".env")
 
@@ -30,34 +28,17 @@ async def get_lst_command(message: Message):
     text = 'Ссылки'
     await message.answer(text, reply_markup=keyboards.lst_lang_url)
 
-@dp.callback_query(keyboards.Get_info.filter(F.query == 'python'))
+@dp.callback_query(keyboards.Get_info.filter(F.query.in_(['python', 'javascript'])))
 async def get_info_python(query: CallbackQuery, callback_data: keyboards.Get_info):
     text = '''Перед вами список команд отсортированный по частоте использования.
     Выбери интересующию команду'''
-    await query.message.answer(text, reply_markup=keyboards.lst_commands_python)
+    data = query.data
+    if 'python' in data:
+        await query.message.answer(text, reply_markup=keyboards.lst_commands_python)
+    elif 'javascript' in data:
+         await query.message.answer(text, reply_markup=keyboards.lst_commands_javascript)
 
-@dp.callback_query(keyboards.Get_info.filter(F.query == 'javascript'))
-async def get_info_python(query: CallbackQuery, callback_data: keyboards.Get_info):
-    text = '''Перед вами список команд отсортированный по частоте использования.
-    Выбери интересующию команду'''
-    await query.message.answer(text, reply_markup=keyboards.lst_commands_javascript)
-
-@dp.callback_query(keyboards.Get_info.filter(F.query == 'def'))
-async def get_info_python(query: CallbackQuery, callback_data: keyboards.Get_info):
-    text = '''много много инфы'''
-    await query.message.answer(text)
-
-@dp.callback_query(keyboards.Get_info.filter(F.query == 'print'))
-async def get_info_python(query: CallbackQuery, callback_data: keyboards.Get_info):
-    text = '''много много инфы'''
-    await query.message.answer(text)
-
-@dp.callback_query(keyboards.Get_info.filter(F.query == 'function'))
-async def get_info_python(query: CallbackQuery, callback_data: keyboards.Get_info):
-    text = '''много много инфы'''
-    await query.message.answer(text)
-
-@dp.callback_query(keyboards.Get_info.filter(F.query == 'let'))
+@dp.callback_query(keyboards.Get_info.filter(F.query.in_(['function', 'let', 'print', 'def'])))
 async def get_info_python(query: CallbackQuery, callback_data: keyboards.Get_info):
     text = '''много много инфы'''
     await query.message.answer(text)
